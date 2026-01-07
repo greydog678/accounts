@@ -1,0 +1,110 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+// 导入db函数
+const db = require('../db/db');
+// 创建一个异步自动执行函数，然后包裹其他代码
+(async ()=> {
+  try {
+    // 先连接数据库
+    await db();
+    // 在启动HTTP服务
+    var app = require('../app');
+    var debug = require('debug')('accounts:server');
+    var http = require('http');
+
+    /**
+     * Get port from environment and store in Express.
+     */
+
+    var port = normalizePort(process.env.PORT || '3000');
+    app.set('port', port);
+
+    /**
+     * Create HTTP server.
+     */
+
+    var server = http.createServer(app);
+
+    /**
+     * Listen on provided port, on all network interfaces.
+     */
+
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+
+    /**
+     * Normalize a port into a number, string, or false.
+     */
+
+    function normalizePort(val) {
+      var port = parseInt(val, 10);
+
+      if (isNaN(port)) {
+        // named pipe
+        return val;
+      }
+
+      if (port >= 0) {
+        // port number
+        return port;
+      }
+
+      return false;
+    }
+
+    /**
+     * Event listener for HTTP server "error" event.
+     */
+
+    function onError(error) {
+      if (error.syscall !== 'listen') {
+        throw error;
+      }
+
+      var bind = typeof port === 'string'
+          ? 'Pipe ' + port
+          : 'Port ' + port;
+
+      // handle specific listen errors with friendly messages
+      switch (error.code) {
+        case 'EACCES':
+          console.error(bind + ' requires elevated privileges');
+          process.exit(1);
+          break;
+        case 'EADDRINUSE':
+          console.error(bind + ' is already in use');
+          process.exit(1);
+          break;
+        default:
+          throw error;
+      }
+    }
+
+    /**
+     * Event listener for HTTP server "listening" event.
+     */
+
+    function onListening() {
+      var addr = server.address();
+      var bind = typeof addr === 'string'
+          ? 'pipe ' + addr
+          : 'port ' + addr.port;
+      debug('Listening on ' + bind);
+    }
+    console.log('服务启动成功，端口3000')
+
+  } catch(err) {
+    console.error('服务启动失败，数据未连接', err);
+    // 立即终止进程
+    // process 是全局对象，用于表示当前正在运行的 Node.js 进程。
+    // 0正常退出  1异常退出
+    // 这是操作系统、Shell、CI/CD 工具、Docker、Supervisor 等判断程序是否“失败”的标准方式。
+    process.exit(1);
+  }
+})();
+
+

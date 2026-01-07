@@ -1,0 +1,36 @@
+// 导入mongoose
+const mongoose = require('mongoose');
+
+// 实例化文档的结构对象
+// 设置集合中文档的属性以及属性值的类型
+const AccountSchema = new mongoose.Schema({
+    // 事项
+    title: {
+        type: String,
+        required: true
+    },
+    // 时间
+    time: Date,
+
+    // 类型
+    type: {
+        type: Number,
+        default: -1
+    },
+    // 金额
+    account: {
+        type: Number,
+        required: true
+    },
+    // 备注
+    remarks: {
+        type: String
+    }
+
+})
+
+// 创建模型对象 对文档操作的封装对象 一个模型对应一给集合
+const AccountModel = mongoose.model('accounts', AccountSchema)
+
+// 暴露模型对象
+module.exports = AccountModel;
